@@ -1,5 +1,6 @@
 from vrtneopixel import *
 import time
+import random
 
 LED_COUNT       = 64
 LED_PIN         = 18
@@ -43,7 +44,32 @@ def snakeDown(snake):
     else:
         newLed_y = newLed_y + 1
     snake.insert(0, (newLed_x, newLed_y))
-    
+
+def snakeRight(snake):
+    snake.pop()
+    newLed_x, newLed_y = snake[0]
+    if newLed_x == 7:
+        newLed_x = 0
+    else:
+        newLed_x = newLed_x + 1
+    snake.insert(0, (newLed_x, newLed_y))
+
+def snakeLeft(snake):
+    snake.pop()
+    newLed_x, newLed_y = snake[0]
+    if newLed_x == 0:
+        newLed_x = 7
+    else:
+        newLed_x = newLed_x - 1
+    snake.insert(0, (newLed_x, newLed_y))
+
+# random direction
+def changeDirection(direction):
+    unauthorized = [1, 0, 3, 2]
+    while True:
+        newDirection = random.randint(0,3)
+        if newDirection != unauthorized[direction]:
+            return newDirection
 
 if __name__ == '__main__':
     # create snake
@@ -52,6 +78,8 @@ if __name__ == '__main__':
     leds = [Color(0, 0, 0)] * 64
     # nbr maximum
     maxi = 99
+    # direction
+    direction = 0
 
 
     # initialize screen
@@ -63,14 +91,26 @@ if __name__ == '__main__':
         displayScreen(strip, leds)
         time.sleep(0.1)
         removeSnake(snake, leds)
-        snakeDown(snake)
+
+        if maxi % 5 == 0:
+            direction = changeDirection(direction)
+
+        if direction == 0:
+            snakeUp(snake)
+        elif direction == 1:
+            snakeDown(snake)
+        elif direction == 2:
+            snakeRight(snake)
+        elif direction == 3:
+            snakeLeft(snake)
+
         maxi = maxi - 1
 
 
   
 
     # wait 10 second and reinitialize
-    time.sleep(10)
+
     clearScreen(leds)
     displayScreen(strip, leds)
 
