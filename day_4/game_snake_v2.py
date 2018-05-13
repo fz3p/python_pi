@@ -71,6 +71,21 @@ def snakeLeft(snake):
         newLed_x = newLed_x - 1
     snake.insert(0, (newLed_x, newLed_y))
 
+def die(snake, leds, strip):
+    for nb in range(5):
+        for i in range(50):
+            addElement(snake, leds, Color(0, 255-i*5, 5+i*5))
+            displayScreen(strip, leds)
+            time.sleep(0,1)
+        for i in range(50):
+            addElement(snake, leds, Color(0, 5+i*5, 255-i*5))
+            displayScreen(strip, leds)
+            time.sleep(0,1)
+
+def isDead(snake):
+    return snake[0] in snake[1:]
+            
+
 # food
 def addFood(food, leds):
     addElement(food, leds, Color(255, 255, 0))
@@ -84,6 +99,28 @@ def digestedFood(food, digest, snake):
             digest.remove(food)
             snake.append(food)
 
+# win
+def isWinner(food, digest):
+    return len(food) == 0 and len(digest) == 0
+
+def displayBox(size, color, leds):
+    for x in range(size, 8-size):
+        for y in range(size, 8 - size):
+            leds[x+y*8]=color
+
+def victory(leds, strip):
+    clearScreen(leds)
+    displayScreen(strip, leds)
+    for nb in range(5):
+        for size in range(4):
+            displayBox(size, Color(255-40*size, 50*size, 0), leds)
+            displayScreen(strip, leds)
+            time.sleep(0.2)
+        for size in range(4, 0, -1):
+            displayBox(size, Color(0,0,0), leds)
+            displayScreen(strip, leds)
+            time.sleep(0.2)
+            
 # unauthorized direction
 def changeDirection(direction, newDirection):
     unauthorized = [1,0,3,2]
@@ -142,8 +179,16 @@ if __name__ == '__main__':
         addFood(food, leds)
         displayScreen(strip, leds)
         time.sleep(0.1)
-        removeSnake(snake, leds)
 
+        if isDead(snake):
+            die(snake, leds, strip)
+            break
+
+        if isWinner(food, estomac):
+            victory(leds, strip)
+            break
+        
+        removeSnake(snake, leds)
         deplacement = stdscr.getch()
         stdscr.refresh()
 
