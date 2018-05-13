@@ -82,6 +82,7 @@ def digestedFood(food, digest, snake):
     for food in digest:
         if food not in snake:
             digest.remove(food)
+            snake.append(food)
 
 # unauthorized direction
 def changeDirection(direction, newDirection):
