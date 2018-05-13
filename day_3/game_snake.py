@@ -64,6 +64,14 @@ def snakeLeft(snake):
         newLed_x = newLed_x - 1
     snake.insert(0, (newLed_x, newLed_y))
 
+# unauthorized direction
+def changeDirection(direction, newDirection):
+    unauthorized = [1,0,3,2]
+    if newDirection != unauthorized[direction]:
+        return newDirection
+    else:
+        return direction
+
 
 # start curses
 def initCurses():
@@ -71,6 +79,7 @@ def initCurses():
     curses.noecho()
     curses.cbreak()
     stdscr.keypad(1)
+    stdscr.nodelay(1)
     return stdscr
 
 # close curses
@@ -87,6 +96,9 @@ if __name__ == '__main__':
     # create array
     leds = [Color(0, 0, 0)] * 64
 
+    direction = 0
+    newDirection = direction
+
 
     # initialize screen
     strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ, LED_DMA, LED_BRIGHTNESS, LED_INVERT)
@@ -100,19 +112,32 @@ if __name__ == '__main__':
         time.sleep(0.1)
         removeSnake(snake, leds)
 
-        direction = stdscr.getch()
+        deplacement = stdscr.getch()
         stdscr.refresh()
-        if direction == curses.KEY_UP:
-            snakeUp(snake)
+
+
+        if deplacement == curses.KEY_UP:
+            newDirection = 0
         elif direction == curses.KEY_DOWN:
-            snakeDown(snake)
+            newDirection = 1
         elif direction == curses.KEY_RIGHT:
-            snakeRight(snake)
+            newDirection = 2
         elif direction == curses.KEY_LEFT:
-            snakeLeft(snake)
+            newDirection = 3
         elif direction == 27:
             closeCurses(stdscr)
             break       
+
+        direction = changeDirection(direction, newDirection)
+        
+        if direction == 0:
+            snakeUp(snake)
+        elif direction == 1:
+            snakeDown(snake)
+        elif direction == 2:
+            snakeRight(snake)
+        elif direction == 3:
+            snakeLeft(snake)
 
     # reinitialize
     clearScreen(leds)
