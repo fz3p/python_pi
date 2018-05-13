@@ -79,7 +79,7 @@ def initCurses():
     curses.noecho()
     curses.cbreak()
     stdscr.keypad(1)
-    stdscr.nodelay(1)
+    stdscr.nodelay(1) # auto
     return stdscr
 
 # close curses
@@ -115,16 +115,15 @@ if __name__ == '__main__':
         deplacement = stdscr.getch()
         stdscr.refresh()
 
-
         if deplacement == curses.KEY_UP:
             newDirection = 0
-        elif direction == curses.KEY_DOWN:
+        elif deplacement == curses.KEY_DOWN:
             newDirection = 1
-        elif direction == curses.KEY_RIGHT:
+        elif deplacement == curses.KEY_RIGHT:
             newDirection = 2
-        elif direction == curses.KEY_LEFT:
+        elif deplacement == curses.KEY_LEFT:
             newDirection = 3
-        elif direction == 27:
+        elif deplacement == 27:
             closeCurses(stdscr)
             break       
 
